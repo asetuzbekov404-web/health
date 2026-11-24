@@ -13,6 +13,12 @@
       --line: #cbd5e1;
       --accent: #0284c7;
       --accent-soft: rgba(2, 132, 199, 0.12);
+      --warn-bg: #fffbeb;
+      --warn-line: #f59e0b;
+      --danger-bg: #fef2f2;
+      --danger-line: #ef4444;
+      --ok-bg: #f0fdf4;
+      --ok-line: #22c55e;
       --upper: rgba(239, 68, 68, 0.45);
       --upper-stroke: #dc2626;
       --mid: rgba(245, 158, 11, 0.45);
@@ -30,7 +36,7 @@
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
       background: var(--bg);
       color: var(--ink);
-      padding: 16px 12px 40px;
+      padding: 16px 12px 44px;
       line-height: 1.45;
     }
 
@@ -204,6 +210,46 @@
       color: var(--accent);
     }
 
+    .advice-box {
+      border-radius: 14px;
+      padding: 12px 14px;
+      border: 1.5px solid var(--ok-line);
+      background: var(--ok-bg);
+    }
+
+    .advice-box.warn {
+      border-color: var(--warn-line);
+      background: var(--warn-bg);
+    }
+
+    .advice-box.danger {
+      border-color: var(--danger-line);
+      background: var(--danger-bg);
+    }
+
+    .advice-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 4px;
+    }
+
+    .advice-main {
+      margin: 0 0 6px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .advice-steps {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 13px;
+      color: var(--ink);
+    }
+
     .cfg-row {
       display: flex;
       gap: 8px;
@@ -227,6 +273,12 @@
       font-weight: 700;
       font-size: 13px;
       cursor: pointer;
+    }
+
+    .esp-note {
+      margin: 8px 0 0;
+      font-size: 12px;
+      color: var(--muted);
     }
   </style>
 </head>
@@ -261,7 +313,6 @@
 
     <div class="card">
       <div class="diagram-wrap">
-        <!-- Анатомическая схема корпуса и 3 зоны живота на казахском -->
         <svg class="abdomen-svg" viewBox="0 0 320 420" role="group" aria-label="Іш аймақтары">
           <defs>
             <linearGradient id="skinGrad" x1="0" y1="0" x2="0" y2="1">
@@ -270,7 +321,6 @@
             </linearGradient>
           </defs>
 
-          <!-- Фон и контур тела -->
           <rect x="0" y="0" width="320" height="420" fill="#f8fafc" />
           <path
             d="M122,22 C122,8 198,8 198,22 L198,56 C225,66 246,92 252,130 L264,255 L240,262 L228,155 L224,398 L172,398 L166,285 L154,285 L148,398 L96,398 L92,155 L80,262 L56,255 L68,130 C74,92 95,66 122,56 Z"
@@ -279,7 +329,6 @@
             stroke-width="2"
           />
 
-          <!-- Көкірек / қабырға сызықтары -->
           <path
             d="M112,115 Q160,132 208,115"
             fill="none"
@@ -287,7 +336,6 @@
             stroke-width="2"
           />
 
-          <!-- 1. Жоғарғы іш -->
           <rect
             id="zone-upper"
             class="zone"
@@ -306,7 +354,6 @@
           />
           <text x="160" y="167" class="zone-label">Жоғарғы іш</text>
 
-          <!-- 2. Кіндік маңы -->
           <rect
             id="zone-mid"
             class="zone"
@@ -325,10 +372,8 @@
           />
           <text x="160" y="229" class="zone-label">Кіндік маңы</text>
 
-          <!-- Кіндік нүктесі -->
           <circle cx="160" cy="244" r="2.5" fill="#78350f" opacity="0.7" />
 
-          <!-- 3. Төменгі іш -->
           <rect
             id="zone-lower"
             class="zone"
@@ -357,26 +402,103 @@
     </div>
 
     <div class="card">
-      <p class="summary-title">ESP32 дерек көзі (міндетті емес):</p>
+      <p class="summary-title">Не істеу керек (бастапқы кеңес):</p>
+      <div id="adviceBox" class="advice-box">
+        <span id="adviceBadge" class="advice-badge">Бақылау</span>
+        <p id="adviceMain" class="advice-main">Белгілер мен іш аймағын таңдаңыз.</p>
+        <ul id="adviceSteps" class="advice-steps">
+          <li>Баланы тыныш жағдайға отырғызып немесе жатқызып, пульс пен температураны бақылаңыз.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="summary-title">ESP32 дерек көзін қосу:</p>
       <div class="cfg-row">
         <input id="jsonUrl" type="url" placeholder="https://.../data.json (бос болса — демо)" />
         <button id="applyUrl" type="button">Қосу</button>
       </div>
+      <p class="esp-note">
+        ESP32-ден JSON формат күтіледі: <code>{"bpm":78,"finger":true,"temp":36.6}</code>. Сайт нақты диагноз қоймайды — дәрігерге жүгінуді алмастырмайды.
+      </p>
     </div>
   </div>
 
   <script>
-    const checkboxes = Array.from(document.querySelectorAll('.chk input[type="checkbox"]'));
+    const chkDizziness = document.getElementById('chkDizziness');
+    const chkNausea = document.getElementById('chkNausea');
+    const checkboxes = [chkDizziness, chkNausea];
     const zones = Array.from(document.querySelectorAll('.zone'));
     const summaryText = document.getElementById('summaryText');
     const selectedPills = document.getElementById('selectedPills');
+    const adviceBox = document.getElementById('adviceBox');
+    const adviceBadge = document.getElementById('adviceBadge');
+    const adviceMain = document.getElementById('adviceMain');
+    const adviceSteps = document.getElementById('adviceSteps');
     const bpmOut = document.getElementById('bpmOut');
     const tempOut = document.getElementById('tempOut');
     const jsonUrlInput = document.getElementById('jsonUrl');
 
     const activeZones = new Set();
+    let currentBpm = null;
+    let currentTemp = null;
     let apiUrl = localStorage.getItem('gutscan_kk_api') || '';
     jsonUrlInput.value = apiUrl;
+
+    function updateAdvice() {
+      const hasDizzy = chkDizziness.checked;
+      const hasNausea = chkNausea.checked;
+      const hasLower = activeZones.has('Төменгі іш');
+      const hasUpper = activeZones.has('Жоғарғы іш');
+      const hasMid = activeZones.has('Кіндік маңы');
+      const highTemp = currentTemp !== null && currentTemp >= 38.0;
+      const highBpm = currentBpm !== null && currentBpm >= 115;
+
+      const steps = [];
+      let severity = 'ok';
+      let badge = 'Бақылау';
+      let mainText = 'Баланың жағдайын тыныш күйде бақылаңыз.';
+
+      if (hasLower || highTemp || (hasDizzy && hasNausea) || highBpm) {
+        severity = 'danger';
+        badge = 'Дәрігерге қаралу қажет';
+        mainText = 'Күмәнді белгілер немесе көрсеткіштер байқалады — маманға тезірек хабарласқан жөн.';
+      } else if (hasDizzy || hasNausea || hasUpper || hasMid) {
+        severity = 'warn';
+        badge = 'Назар аударыңыз';
+        mainText = 'Баланы тыныштандырып, ағзаның реакциясын қадағалаңыз.';
+      }
+
+      if (hasDizzy) {
+        steps.push('Бас айналғанда баланы отырғызып немесе жатқызып, кенет тұрғызбаңыз; таза ауа беріңіз.');
+      }
+      if (hasNausea) {
+        steps.push('Жүрек айнығанда ауыр тамақ бермей, суды аз-аздан, жиі ішкізіңіз.');
+      }
+      if (hasUpper) {
+        steps.push('Жоғарғы іш аймағы ауырса, тамақтанудан кейінгі жағдайды және қысым/температураны тексеріңіз.');
+      }
+      if (hasMid) {
+        steps.push('Кіндік маңындағы ауру кезінде нәжіс пен зәр шығару жиілігін бақылаңыз.');
+      }
+      if (hasLower) {
+        steps.push('Төменгі іш аймағы ауырса, ауырсынуды басатын дәріні дәрігерсіз бермей, маманға көрініңіз.');
+      }
+      if (highTemp) {
+        steps.push(`Температура жоғары (${currentTemp.toFixed(1)} °C) — бөлмені желдетіп, дәрігермен кеңесіңіз.`);
+      }
+      if (highBpm) {
+        steps.push(`Пульс жиілеген (${Math.round(currentBpm)} BPM) — тыныштық сақтап, жағдайын қайта өлшеңіз.`);
+      }
+      if (steps.length === 0) {
+        steps.push('Қазіргі таңда шағымдар белгіленбеген. Өлшеу кезінде бала қозғалмай отырсын.');
+      }
+
+      adviceBox.className = `advice-box ${severity === 'ok' ? '' : severity}`;
+      adviceBadge.textContent = badge;
+      adviceMain.textContent = mainText;
+      adviceSteps.innerHTML = steps.map((s) => `<li>${s}</li>`).join('');
+    }
 
     function updateSummary() {
       const checkedItems = checkboxes.filter((c) => c.checked).map((c) => c.value);
@@ -386,16 +508,17 @@
       selectedPills.innerHTML = '';
       if (all.length === 0) {
         summaryText.textContent = 'Әзірге ештеңе таңдалған жоқ.';
-        return;
+      } else {
+        summaryText.textContent = `Таңдалды (${all.length}):`;
+        all.forEach((label) => {
+          const span = document.createElement('span');
+          span.className = 'pill';
+          span.textContent = label;
+          selectedPills.appendChild(span);
+        });
       }
 
-      summaryText.textContent = `Таңдалды (${all.length}):`;
-      all.forEach((label) => {
-        const span = document.createElement('span');
-        span.className = 'pill';
-        span.textContent = label;
-        selectedPills.appendChild(span);
-      });
+      updateAdvice();
     }
 
     checkboxes.forEach((chk) => {
@@ -436,9 +559,12 @@
       if (!apiUrl) {
         const s = Date.now() / 1000;
         const bpm = Math.round(76 + Math.sin(s * 0.7) * 4);
-        const temp = (36.5 + Math.cos(s / 8) * 0.2).toFixed(1);
+        const temp = Number((36.5 + Math.cos(s / 8) * 0.2).toFixed(1));
+        currentBpm = bpm;
+        currentTemp = temp;
         bpmOut.textContent = `${bpm} BPM`;
-        tempOut.textContent = `${temp} °C`;
+        tempOut.textContent = `${temp.toFixed(1)} °C`;
+        updateAdvice();
         return;
       }
 
@@ -447,11 +573,30 @@
         if (!res.ok) throw new Error();
         const d = await res.json();
         const raw = d && d.latest ? d.latest : d;
-        bpmOut.textContent = raw.finger && raw.bpm ? `${Math.round(raw.bpm)} BPM` : '-- BPM';
-        tempOut.textContent = raw.temp !== undefined ? `${Number(raw.temp).toFixed(1)} °C` : '--.- °C';
+
+        if (raw.finger && raw.bpm) {
+          currentBpm = Number(raw.bpm);
+          bpmOut.textContent = `${Math.round(currentBpm)} BPM`;
+        } else {
+          currentBpm = null;
+          bpmOut.textContent = '-- BPM';
+        }
+
+        if (raw.temp !== undefined && Number.isFinite(Number(raw.temp))) {
+          currentTemp = Number(raw.temp);
+          tempOut.textContent = `${currentTemp.toFixed(1)} °C`;
+        } else {
+          currentTemp = null;
+          tempOut.textContent = '--.- °C';
+        }
+
+        updateAdvice();
       } catch (_) {
+        currentBpm = null;
+        currentTemp = null;
         bpmOut.textContent = '-- BPM';
         tempOut.textContent = '--.- °C';
+        updateAdvice();
       }
     }
 
