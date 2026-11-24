@@ -1,21 +1,24 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="kk">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>GutScan Junior — Мониторинг пульса и температуры</title>
+  <title>GUTSCAN JUNIOR — Баланың іш ауруын бастапқы бағалау</title>
   <style>
     :root {
-      --bg: #0f131a;
-      --card: #171d27;
-      --card-2: #1e2634;
-      --line: #2a3446;
-      --ink: #f3f6fb;
-      --muted: #94a3b8;
-      --accent: #38bdf8;
-      --ok: #22c55e;
-      --warn: #f59e0b;
-      --danger: #ef4444;
+      --bg: #eef2f7;
+      --card: #ffffff;
+      --ink: #0f172a;
+      --muted: #475569;
+      --line: #cbd5e1;
+      --accent: #0284c7;
+      --accent-soft: rgba(2, 132, 199, 0.12);
+      --upper: rgba(239, 68, 68, 0.45);
+      --upper-stroke: #dc2626;
+      --mid: rgba(245, 158, 11, 0.45);
+      --mid-stroke: #d97706;
+      --lower: rgba(59, 130, 246, 0.45);
+      --lower-stroke: #2563eb;
     }
 
     * {
@@ -24,365 +27,437 @@
 
     body {
       margin: 0;
-      min-height: 100vh;
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      background: radial-gradient(circle at top, #182232 0%, var(--bg) 60%);
+      background: var(--bg);
       color: var(--ink);
-      padding: 20px 14px 40px;
+      padding: 16px 12px 40px;
+      line-height: 1.45;
     }
 
     .app {
-      max-width: 540px;
+      max-width: 480px;
       margin: 0 auto;
     }
 
-    .top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 16px;
+    .header {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      text-align: center;
     }
 
-    h1 {
-      margin: 0;
-      font-size: 24px;
+    .brand {
+      font-size: 18px;
       font-weight: 800;
-      letter-spacing: -0.4px;
+      letter-spacing: 0.6px;
+      color: var(--accent);
+      margin: 0;
     }
 
-    .sub {
+    .subtitle {
       margin: 4px 0 0;
-      font-size: 13px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .vitals-strip {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .vital-box {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 8px 10px;
+      text-align: left;
+    }
+
+    .vital-label {
+      font-size: 11px;
       color: var(--muted);
     }
 
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: var(--card);
-      border: 1px solid var(--line);
-      font-size: 12px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: var(--warn);
-    }
-
-    .dot.live {
-      background: var(--ok);
-      box-shadow: 0 0 10px var(--ok);
-    }
-
-    .dot.err {
-      background: var(--danger);
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 14px;
+    .vital-num {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--ink);
     }
 
     .card {
       background: var(--card);
       border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 18px;
-      margin-bottom: 14px;
-    }
-
-    .metric-label {
-      font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-
-    .metric-val {
-      font-size: 36px;
-      font-weight: 800;
-      line-height: 1.1;
-      color: var(--accent);
-    }
-
-    .metric-unit {
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--muted);
-      margin-left: 4px;
-    }
-
-    .status-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 8px;
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    .status-pill {
-      padding: 5px 10px;
-      border-radius: 10px;
-      background: var(--card-2);
-      color: var(--ink);
-      font-weight: 600;
-    }
-
-    h2 {
-      margin: 0 0 12px;
-      font-size: 16px;
-      font-weight: 700;
-    }
-
-    label {
-      display: block;
-      font-size: 12px;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 12px;
-      border: 1px solid var(--line);
-      background: var(--card-2);
-      color: var(--ink);
-      font-size: 14px;
+      border-radius: 16px;
+      padding: 14px;
       margin-bottom: 12px;
     }
 
-    .row-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    button {
-      width: 100%;
-      padding: 11px 14px;
-      border-radius: 12px;
-      border: 0;
-      background: var(--accent);
-      color: #081018;
-      font-size: 14px;
-      font-weight: 800;
-      cursor: pointer;
-    }
-
-    button.secondary {
-      background: var(--card-2);
-      color: var(--ink);
-      border: 1px solid var(--line);
-    }
-
-    .qr-box {
+    .chk {
       display: flex;
-      flex-direction: column;
       align-items: center;
-      text-align: center;
-      gap: 10px;
+      gap: 12px;
+      padding: 12px 14px;
+      border: 1.5px solid var(--line);
+      border-radius: 12px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      user-select: none;
+      transition: background 0.15s, border-color 0.15s;
     }
 
-    .qr-box img {
-      width: 184px;
-      height: 184px;
-      padding: 10px;
-      background: #ffffff;
-      border-radius: 14px;
+    .chk:last-child {
+      margin-bottom: 0;
     }
 
-    .hint {
-      font-size: 12px;
+    .chk input {
+      width: 22px;
+      height: 22px;
+      accent-color: var(--accent);
+      cursor: pointer;
+      flex: none;
+    }
+
+    .chk:has(input:checked) {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .diagram-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 340px;
+      margin: 0 auto;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #f8fafc;
+    }
+
+    svg.abdomen-svg {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .zone {
+      cursor: pointer;
+      transition: opacity 0.15s, filter 0.15s;
+      opacity: 0.72;
+    }
+
+    .zone:hover,
+    .zone:focus-visible {
+      opacity: 0.92;
+      outline: none;
+    }
+
+    .zone.active {
+      opacity: 1;
+      filter: brightness(1.06);
+      stroke-width: 3.5;
+    }
+
+    .zone-label {
+      font-size: 15px;
+      font-weight: 800;
+      fill: #ffffff;
+      text-anchor: middle;
+      dominant-baseline: central;
+      pointer-events: none;
+      paint-order: stroke;
+      stroke: rgba(15, 23, 42, 0.75);
+      stroke-width: 3px;
+    }
+
+    .summary-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin: 0 0 6px;
+    }
+
+    .summary-text {
+      font-size: 14px;
       color: var(--muted);
-      line-height: 1.45;
       margin: 0;
     }
 
-    @media (max-width: 460px) {
-      .grid, .row-2 {
-        grid-template-columns: 1fr;
-      }
+    .pill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .pill {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .cfg-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .cfg-row input {
+      flex: 1;
+      padding: 9px 11px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      font-size: 13px;
+    }
+
+    .cfg-row button {
+      padding: 9px 14px;
+      border-radius: 10px;
+      border: 0;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
   <div class="app">
-    <div class="top">
-      <div>
-        <h1>GutScan Junior</h1>
-        <p class="sub">Пульс и температура с датчиков ESP32</p>
-      </div>
-      <div class="badge">
-        <span id="statusDot" class="dot"></span>
-        <span id="modeBadge">DEMO</span>
-      </div>
-    </div>
+    <div class="header">
+      <p class="brand">GUTSCAN JUNIOR</p>
+      <p class="subtitle">Баланың іш ауруын бастапқы бағалау</p>
 
-    <div class="grid">
-      <div class="card" style="margin-bottom:0;">
-        <div class="metric-label">Пульс</div>
-        <div id="bpmVal" class="metric-val">--<span class="metric-unit">BPM</span></div>
-      </div>
-      <div class="card" style="margin-bottom:0;">
-        <div class="metric-label">Температура</div>
-        <div id="tempVal" class="metric-val">--.-<span class="metric-unit">°C</span></div>
+      <div class="vitals-strip">
+        <div class="vital-box">
+          <div class="vital-label">Пульс (ESP32)</div>
+          <div id="bpmOut" class="vital-num">-- BPM</div>
+        </div>
+        <div class="vital-box">
+          <div class="vital-label">Температура (ESP32)</div>
+          <div id="tempOut" class="vital-num">--.- °C</div>
+        </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="status-row">
-        <span>Состояние датчика: <strong id="fingerText">Ожидание...</strong></span>
-        <span id="ambientText" class="status-pill">Среда: --.- °C</span>
-      </div>
-      <p class="hint" id="lastSync" style="margin-top:10px;">Последнее обновление: —</p>
+      <label class="chk">
+        <input type="checkbox" id="chkDizziness" value="Бас айналып тұр" />
+        <span>Бас айналып тұр</span>
+      </label>
+      <label class="chk">
+        <input type="checkbox" id="chkNausea" value="Жүрегім айнып тұр" />
+        <span>Жүрегім айнып тұр</span>
+      </label>
     </div>
 
     <div class="card">
-      <h2>Источник данных ESP32</h2>
-      <label for="sourceMode">Режим работы</label>
-      <select id="sourceMode">
-        <option value="demo">Демо-данные (тест интерфейса)</option>
-        <option value="api">Реальный API / JSON URL</option>
-      </select>
+      <div class="diagram-wrap">
+        <!-- Анатомическая схема корпуса и 3 зоны живота на казахском -->
+        <svg class="abdomen-svg" viewBox="0 0 320 420" role="group" aria-label="Іш аймақтары">
+          <defs>
+            <linearGradient id="skinGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#f7d5be" />
+              <stop offset="100%" stop-color="#e8b899" />
+            </linearGradient>
+          </defs>
 
-      <label for="apiUrl">URL JSON-эндпоинта (GET)</label>
-      <input
-        id="apiUrl"
-        type="url"
-        placeholder="https://example.com/api/latest.json"
-      />
+          <!-- Фон и контур тела -->
+          <rect x="0" y="0" width="320" height="420" fill="#f8fafc" />
+          <path
+            d="M122,22 C122,8 198,8 198,22 L198,56 C225,66 246,92 252,130 L264,255 L240,262 L228,155 L224,398 L172,398 L166,285 L154,285 L148,398 L96,398 L92,155 L80,262 L56,255 L68,130 C74,92 95,66 122,56 Z"
+            fill="url(#skinGrad)"
+            stroke="#94a3b8"
+            stroke-width="2"
+          />
 
-      <div class="row-2">
-        <button id="saveBtn" type="button">Сохранить и обновить</button>
-        <button id="refreshBtn" class="secondary" type="button">Обновить сейчас</button>
+          <!-- Көкірек / қабырға сызықтары -->
+          <path
+            d="M112,115 Q160,132 208,115"
+            fill="none"
+            stroke="#c28e70"
+            stroke-width="2"
+          />
+
+          <!-- 1. Жоғарғы іш -->
+          <rect
+            id="zone-upper"
+            class="zone"
+            data-zone="Жоғарғы іш"
+            x="104"
+            y="138"
+            width="112"
+            height="58"
+            rx="14"
+            fill="var(--upper)"
+            stroke="var(--upper-stroke)"
+            stroke-width="2.5"
+            tabindex="0"
+            role="button"
+            aria-pressed="false"
+          />
+          <text x="160" y="167" class="zone-label">Жоғарғы іш</text>
+
+          <!-- 2. Кіндік маңы -->
+          <rect
+            id="zone-mid"
+            class="zone"
+            data-zone="Кіндік маңы"
+            x="104"
+            y="202"
+            width="112"
+            height="54"
+            rx="14"
+            fill="var(--mid)"
+            stroke="var(--mid-stroke)"
+            stroke-width="2.5"
+            tabindex="0"
+            role="button"
+            aria-pressed="false"
+          />
+          <text x="160" y="229" class="zone-label">Кіндік маңы</text>
+
+          <!-- Кіндік нүктесі -->
+          <circle cx="160" cy="244" r="2.5" fill="#78350f" opacity="0.7" />
+
+          <!-- 3. Төменгі іш -->
+          <rect
+            id="zone-lower"
+            class="zone"
+            data-zone="Төменгі іш"
+            x="104"
+            y="262"
+            width="112"
+            height="56"
+            rx="14"
+            fill="var(--lower)"
+            stroke="var(--lower-stroke)"
+            stroke-width="2.5"
+            tabindex="0"
+            role="button"
+            aria-pressed="false"
+          />
+          <text x="160" y="290" class="zone-label">Төменгі іш</text>
+        </svg>
       </div>
-      <p class="hint" style="margin-top:10px;">
-        Ожидаемый формат JSON: <code>{"bpm":76,"finger":true,"temp":36.6,"ambient":23.4}</code>
-      </p>
     </div>
 
-    <div class="card qr-box">
-      <h2 style="margin-bottom:2px;">QR-код для открытия сайта</h2>
-      <img id="qrImg" alt="QR-код сайта" />
-      <p class="hint" id="qrUrlText"></p>
+    <div class="card">
+      <p class="summary-title">Таңдалған белгілер мен аймақтар:</p>
+      <p id="summaryText" class="summary-text">Әзірге ештеңе таңдалған жоқ.</p>
+      <div id="selectedPills" class="pill-list"></div>
+    </div>
+
+    <div class="card">
+      <p class="summary-title">ESP32 дерек көзі (міндетті емес):</p>
+      <div class="cfg-row">
+        <input id="jsonUrl" type="url" placeholder="https://.../data.json (бос болса — демо)" />
+        <button id="applyUrl" type="button">Қосу</button>
+      </div>
     </div>
   </div>
 
   <script>
-    const STORAGE_KEY = "gutscan_junior_config_v1";
+    const checkboxes = Array.from(document.querySelectorAll('.chk input[type="checkbox"]'));
+    const zones = Array.from(document.querySelectorAll('.zone'));
+    const summaryText = document.getElementById('summaryText');
+    const selectedPills = document.getElementById('selectedPills');
+    const bpmOut = document.getElementById('bpmOut');
+    const tempOut = document.getElementById('tempOut');
+    const jsonUrlInput = document.getElementById('jsonUrl');
 
-    const bpmEl = document.getElementById("bpmVal");
-    const tempEl = document.getElementById("tempVal");
-    const fingerEl = document.getElementById("fingerText");
-    const ambientEl = document.getElementById("ambientText");
-    const lastSyncEl = document.getElementById("lastSync");
-    const statusDot = document.getElementById("statusDot");
-    const modeBadge = document.getElementById("modeBadge");
-    const modeSelect = document.getElementById("sourceMode");
-    const apiInput = document.getElementById("apiUrl");
-    const qrImg = document.getElementById("qrImg");
-    const qrUrlText = document.getElementById("qrUrlText");
+    const activeZones = new Set();
+    let apiUrl = localStorage.getItem('gutscan_kk_api') || '';
+    jsonUrlInput.value = apiUrl;
 
-    let config = {
-      mode: "demo",
-      apiUrl: ""
-    };
+    function updateSummary() {
+      const checkedItems = checkboxes.filter((c) => c.checked).map((c) => c.value);
+      const zoneItems = Array.from(activeZones);
+      const all = [...checkedItems, ...zoneItems];
 
-    try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-      if (saved.mode) config.mode = saved.mode;
-      if (typeof saved.apiUrl === "string") config.apiUrl = saved.apiUrl;
-    } catch (_) {}
-
-    modeSelect.value = config.mode;
-    apiInput.value = config.apiUrl;
-
-    function renderQr() {
-      const currentUrl = window.location.href;
-      qrUrlText.textContent = currentUrl;
-      qrImg.src =
-        "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=" +
-        encodeURIComponent(currentUrl);
-    }
-
-    function applyTelemetry(data) {
-      const finger = Boolean(data.finger);
-      const bpm = Number(data.bpm || 0);
-      const temp = Number(data.temp || 0);
-      const ambient = data.ambient !== undefined ? Number(data.ambient) : null;
-
-      bpmEl.innerHTML = (finger && bpm > 0 ? Math.round(bpm) : "--") +
-        '<span class="metric-unit">BPM</span>';
-      tempEl.innerHTML = (Number.isFinite(temp) ? temp.toFixed(1) : "--.-") +
-        '<span class="metric-unit">°C</span>';
-
-      fingerEl.textContent = finger ? "Палец определён" : "Палец не приложен";
-      ambientEl.textContent =
-        ambient !== null && Number.isFinite(ambient)
-          ? `Среда: ${ambient.toFixed(1)} °C`
-          : "Среда: --.- °C";
-
-      lastSyncEl.textContent = "Последнее обновление: " + new Date().toLocaleTimeString();
-    }
-
-    function getDemoTelemetry() {
-      const t = Date.now() / 1000;
-      const finger = Math.sin(t / 12) > -0.6;
-      const bpm = finger ? Math.round(74 + Math.sin(t * 0.8) * 5) : 0;
-      const temp = 36.4 + Math.sin(t / 7) * 0.3;
-      const ambient = 23.2 + Math.cos(t / 15) * 0.2;
-      return { bpm, finger, temp, ambient };
-    }
-
-    async function tick() {
-      if (config.mode === "demo" || !config.apiUrl.trim()) {
-        statusDot.className = "dot";
-        modeBadge.textContent = "DEMO";
-        applyTelemetry(getDemoTelemetry());
+      selectedPills.innerHTML = '';
+      if (all.length === 0) {
+        summaryText.textContent = 'Әзірге ештеңе таңдалған жоқ.';
         return;
       }
 
-      modeBadge.textContent = "LIVE";
+      summaryText.textContent = `Таңдалды (${all.length}):`;
+      all.forEach((label) => {
+        const span = document.createElement('span');
+        span.className = 'pill';
+        span.textContent = label;
+        selectedPills.appendChild(span);
+      });
+    }
+
+    checkboxes.forEach((chk) => {
+      chk.addEventListener('change', updateSummary);
+    });
+
+    zones.forEach((z) => {
+      const name = z.dataset.zone;
+      const toggleZone = () => {
+        if (activeZones.has(name)) {
+          activeZones.delete(name);
+          z.classList.remove('active');
+          z.setAttribute('aria-pressed', 'false');
+        } else {
+          activeZones.add(name);
+          z.classList.add('active');
+          z.setAttribute('aria-pressed', 'true');
+        }
+        updateSummary();
+      };
+
+      z.addEventListener('click', toggleZone);
+      z.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleZone();
+        }
+      });
+    });
+
+    document.getElementById('applyUrl').addEventListener('click', () => {
+      apiUrl = jsonUrlInput.value.trim();
+      localStorage.setItem('gutscan_kk_api', apiUrl);
+      pollVitals();
+    });
+
+    async function pollVitals() {
+      if (!apiUrl) {
+        const s = Date.now() / 1000;
+        const bpm = Math.round(76 + Math.sin(s * 0.7) * 4);
+        const temp = (36.5 + Math.cos(s / 8) * 0.2).toFixed(1);
+        bpmOut.textContent = `${bpm} BPM`;
+        tempOut.textContent = `${temp} °C`;
+        return;
+      }
+
       try {
-        const res = await fetch(config.apiUrl.trim(), { cache: "no-store" });
-        if (!res.ok) throw new Error("HTTP " + res.status);
-        const raw = await res.json();
-        // Поддерживаем как прямой объект, так и вложенный { latest: {...} }
-        const data = raw && typeof raw === "object" && raw.latest ? raw.latest : raw;
-        statusDot.className = "dot live";
-        applyTelemetry(data);
-      } catch (err) {
-        statusDot.className = "dot err";
-        lastSyncEl.textContent = "Ошибка загрузки данных: " + err.message;
+        const res = await fetch(apiUrl, { cache: 'no-store' });
+        if (!res.ok) throw new Error();
+        const d = await res.json();
+        const raw = d && d.latest ? d.latest : d;
+        bpmOut.textContent = raw.finger && raw.bpm ? `${Math.round(raw.bpm)} BPM` : '-- BPM';
+        tempOut.textContent = raw.temp !== undefined ? `${Number(raw.temp).toFixed(1)} °C` : '--.- °C';
+      } catch (_) {
+        bpmOut.textContent = '-- BPM';
+        tempOut.textContent = '--.- °C';
       }
     }
 
-    document.getElementById("saveBtn").addEventListener("click", () => {
-      config = {
-        mode: modeSelect.value,
-        apiUrl: apiInput.value.trim()
-      };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
-      tick();
-    });
-
-    document.getElementById("refreshBtn").addEventListener("click", tick);
-
-    renderQr();
-    tick();
-    setInterval(tick, 1500);
+    updateSummary();
+    pollVitals();
+    setInterval(pollVitals, 1500);
   </script>
 </body>
 </html>
