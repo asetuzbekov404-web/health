@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GutScan Junior</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef6f5;--card:#ffffff;--ink:#12343b;--mute:#4d6b70;--line:#cfe2e0;--accent:#0e7c86;--red:#e5484d;--green:#30a46c;--blue:#3e63dd;--warnbg:#fff3d6;--warnline:#d9962b;--warnink:#5c3b00;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1f22;--card:#15302f;--ink:#e6f3f2;--mute:#9bb8b9;--line:#274746;--accent:#4cc3cd;--warnbg:#3a2d12;--warnline:#c78a2a;--warnink:#ffe3a8}}
+:root[data-theme="dark"]{--bg:#0d1f22;--card:#15302f;--ink:#e6f3f2;--mute:#9bb8b9;--line:#274746;--accent:#4cc3cd;--warnbg:#3a2d12;--warnline:#c78a2a;--warnink:#ffe3a8}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Nunito",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5}
+main{max-width:520px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:30px;font-weight:800;margin:0;color:var(--accent);letter-spacing:-.5px}
+.sub{margin:2px 0 20px;color:var(--mute);font-weight:500}
+section{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px}
+h2{font-size:17px;font-weight:800;margin:0 0 10px}
+.chk{display:flex;align-items:center;gap:12px;padding:12px 14px;border:2px solid var(--line);border-radius:14px;margin-bottom:8px;cursor:pointer;font-weight:700;font-size:17px}
+.chk input{width:24px;height:24px;accent-color:var(--accent);flex:none}
+.chk:has(input:checked){border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
+svg{display:block;width:100%;max-width:300px;margin:0 auto;height:auto}
+.torso{fill:color-mix(in srgb,var(--accent) 10%,var(--card));stroke:var(--line);stroke-width:3}
+.zone{cursor:pointer;outline:none;opacity:.55;transition:opacity .15s}
+.zone:hover,.zone:focus-visible{opacity:.85}
+.zone[aria-pressed="true"]{opacity:1;stroke:var(--ink);stroke-width:3}
+.zone:focus-visible{stroke:var(--ink);stroke-width:3;stroke-dasharray:6 3}
+.zl{font-size:13px;font-weight:800;fill:#fff;pointer-events:none;text-anchor:middle}
+.navel{fill:var(--ink);opacity:.6}
+.empty{color:var(--mute);margin:0}
+.res h3{font-size:15px;font-weight:800;margin:14px 0 2px;color:var(--accent)}
+.res p{margin:0}
+.res .tag{display:inline-block;font-weight:800;padding:2px 12px;border-radius:99px;color:#fff;margin-bottom:4px}
+.warn{background:var(--warnbg);border-color:var(--warnline);color:var(--warnink)}
+.warn h2{color:inherit}
+.warn ul{margin:0;padding-left:20px}
+.warn li{margin-bottom:4px}
+.note{font-size:13px;color:var(--mute);text-align:center;margin:0}
+@media (prefers-reduced-motion:reduce){.zone{transition:none}}
+</style>
+</head>
+<body>
+<main>
+  <h1>GutScan Junior</h1>
+  <p class="sub">Баланың іш аймағын бастапқы бағалау</p>
+
+  <section>
+    <h2>1. Қандай белгілер бар?</h2>
+    <label class="chk"><input type="checkbox" id="dizzy"> Бас айналып тұр</label>
+    <label class="chk"><input type="checkbox" id="nausea"> Жүрегім айнып тұр</label>
+  </section>
+
+  <section>
+    <h2>2. Қай жер ауырады? Денеде басыңыз</h2>
+    <svg viewBox="0 0 200 250" role="group" aria-label="Іш аймағы">
+      <path class="torso" d="M48 18 Q100 4 152 18 Q166 70 158 130 Q152 190 160 238 L40 238 Q48 190 42 130 Q34 70 48 18 Z"/>
+      <g id="zones">
+        <ellipse class="zone" data-z="upper" cx="100" cy="88" rx="46" ry="24" fill="var(--red)" tabindex="0" role="button" aria-pressed="false" aria-label="Жоғарғы іш"/>
+        <ellipse class="zone" data-z="middle" cx="100" cy="140" rx="46" ry="24" fill="var(--green)" tabindex="0" role="button" aria-pressed="false" aria-label="Кіндік маңы"/>
+        <ellipse class="zone" data-z="lower" cx="100" cy="192" rx="46" ry="24" fill="var(--blue)" tabindex="0" role="button" aria-pressed="false" aria-label="Төменгі іш"/>
+      </g>
+      <circle class="navel" cx="100" cy="140" r="3"/>
+      <text class="zl" x="100" y="92">Жоғарғы іш</text>
+      <text class="zl" x="100" y="160">кіндік маңы</text>
+      <text class="zl" x="100" y="196">төменгі іш</text>
+    </svg>
+  </section>
+
+  <section class="res" aria-live="polite">
+    <h2>Ақпарат</h2>
+    <div id="out"></div>
+  </section>
+
+  <section class="warn">
+    <h2>Дереу 103 нөміріне қоңырау шалыңыз, егер:</h2>
+    <ul>
+      <li>ауырсыну қатты және тоқтамайды;</li>
+      <li>ауырсыну төменгі оң жаққа ауысты;</li>
+      <li>температура 38 °C-тан жоғары;</li>
+      <li>құсу қайталанады немесе бала су іше алмайды;</li>
+      <li>нәжісте немесе құсықта қан бар;</li>
+      <li>іш қатты және ісінген;</li>
+      <li>бала әлсіз, ұйқышыл немесе қатты мазасыз.</li>
+    </ul>
+  </section>
+
+  <p class="note">Бұл диагноз емес, тек бастапқы ақпарат. Дәрігер қарауын алмастырмайды.</p>
+</main>
+
+<script>
+var ZONES = {
+  upper:  {name:"Жоғарғы іш", color:"var(--red)",
+    causes:"Тамақты көп немесе тез жеу, майлы тамақ, гастрит, асқазан қышқылының жоғары көтерілуі, күйзеліс.",
+    tips:"Тамақты аздап, баяу жеңіз. Майлы, қуырылған тағамнан және газдалған сусыннан біраз бас тартыңыз. Тыныш отырып, жұтым-жұтымнан су ішіңіз."},
+  middle: {name:"Кіндік маңы", color:"var(--green)",
+    causes:"Ішектегі газ, іш қату, ішек түйілуі, тамақтан тітіркену. Аппендицит кейде кіндік маңынан басталады.",
+    tips:"Жылы су ішіп, тыныш жатыңыз. Ішті жылытпаңыз және өздігінен ауырсынуға қарсы дәрі бермеңіз. Ауырсыну күшейсе, дәрігерге көрсетіңіз."},
+  lower:  {name:"Төменгі іш", color:"var(--blue)",
+    causes:"Іш қату, несеп жолындағы қабыну, ішек инфекциясы. Төменгі оң жақтағы ауырсыну аппендициттің белгісі болуы мүмкін.",
+    tips:"Көбірек су ішіңіз. Дәретханаға барғанда ауырса немесе жиі барса, соны жазып қойыңыз. Төменгі оң жақтағы ауырсыну күшейсе, бірден дәрігерге барыңыз."}
+};
+var SYM = {
+  dizzy:  "Бас айналуы сусыздану, ашығу, шаршау немесе қан қысымының өзгеруінен болуы мүмкін. Отырыңыз немесе жатыңыз, жұтым-жұтымнан су ішіңіз.",
+  nausea: "Жүрек айнуы тамақтан улану, гастрит немесе ішек инфекциясында болады. Аздап су ішіп, тамақты біраз уақытқа тоқтатыңыз.",
+  both:   "Екі белгі бірге болса, сусыздану қаупі жоғары: сұйықтықты жиі, аздап ішіңіз."
+};
+var zone = null;
+var out = document.getElementById("out");
+
+function render(){
+  var d = document.getElementById("dizzy").checked;
+  var n = document.getElementById("nausea").checked;
+  var h = "";
+  if (zone) {
+    var z = ZONES[zone];
+    h += '<span class="tag" style="background:' + z.color + '">' + z.name + '</span>';
+    h += '<h3>Мүмкін себептер</h3><p>' + z.causes + '</p>';
+    h += '<h3>Не істеуге болады</h3><p>' + z.tips + '</p>';
+  }
+  if (d || n) {
+    h += '<h3>Белгілер бойынша</h3>';
+    if (d) h += '<p>' + SYM.dizzy + '</p>';
+    if (n) h += '<p>' + SYM.nausea + '</p>';
+    if (d && n) h += '<p>' + SYM.both + '</p>';
+  }
+  if (!h) h = '<p class="empty">Белгіні белгілеңіз немесе денеде ауыратын жерді басыңыз.</p>';
+  out.innerHTML = h;
+  document.querySelectorAll(".zone").forEach(function(e){
+    e.setAttribute("aria-pressed", e.dataset.z === zone ? "true" : "false");
+  });
+}
+
+document.querySelectorAll(".zone").forEach(function(e){
+  e.addEventListener("click", function(){ zone = (zone === e.dataset.z) ? null : e.dataset.z; render(); });
+  e.addEventListener("keydown", function(ev){
+    if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); e.dispatchEvent(new Event("click")); }
+  });
+});
+document.getElementById("dizzy").addEventListener("change", render);
+document.getElementById("nausea").addEventListener("change", render);
+render();
+</script>
+</body>
+</html>
